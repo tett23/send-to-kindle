@@ -100,6 +100,20 @@ send-to-kindle --help
   - プルリクエスト：ベースブランチの先端からプルリクエストの先端まで
   - `main` へのpush：push前の先端からpush後の先端まで。push前の先端が無ければルートコミットから
 
+### リリース
+
+- `v` で始まるタグをpushすると、GitHub Actions（`.github/workflows/release.yml`）がリリースを作成する（ADR 0006）。
+- 手順：`Cargo.toml` の `version` を更新してコミットし、`v<version>` のタグをpushする。
+- タグが `v<Cargo.toml の version>` と一致しなければ失敗する。一致すれば `cargo test --locked` を実行してからビルドする。
+- 成果物
+  - 次のターゲットごとの `send-to-kindle-<タグ>-<ターゲット>.tar.gz`。中身はバイナリ、`LICENSE`、`README.md`。
+    - `aarch64-apple-darwin`
+    - `x86_64-apple-darwin`
+    - `x86_64-unknown-linux-gnu`
+  - すべてのアーカイブのSHA-256をまとめた `SHA256SUMS`
+- リリースのタイトルはタグ名、本文はGitHubの自動生成とする。
+- macOS向けのバイナリは、Apple Developer IDによる署名と公証を行わない。Apple Silicon向けにはリンカーによるアドホック署名だけが付く。検疫の外し方はREADMEに記載する。
+
 ### 依存の方針
 
 - 小さく再実装が容易なライブラリには依存せず、必要な範囲だけを再実装する（ADR 0002）。
