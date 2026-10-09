@@ -23,7 +23,7 @@ macOSでは、`curl` か `gh` を使うと検疫の対処が要らない（後�
 #### `curl` でダウンロードする
 
 ```sh
-tag=v0.1.0
+tag=v0.1.1
 target=aarch64-apple-darwin
 archive="send-to-kindle-$tag-$target.tar.gz"
 curl -fsSLO "https://github.com/tett23/send-to-kindle/releases/download/$tag/$archive"
@@ -33,7 +33,7 @@ curl -fsSLO "https://github.com/tett23/send-to-kindle/releases/download/$tag/SHA
 #### `gh` でダウンロードする
 
 ```sh
-tag=v0.1.0
+tag=v0.1.1
 target=aarch64-apple-darwin
 archive="send-to-kindle-$tag-$target.tar.gz"
 gh release download "$tag" --repo tett23/send-to-kindle --pattern "$archive" --pattern SHA256SUMS
