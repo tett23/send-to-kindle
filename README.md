@@ -8,18 +8,42 @@
 
 ### リリースから
 
-[Releases](https://github.com/tett23/send-to-kindle/releases) から、環境に合うアーカイブと `SHA256SUMS` をダウンロードする。
+[Releases](https://github.com/tett23/send-to-kindle/releases) に、環境ごとのアーカイブと、チェックサムをまとめた `SHA256SUMS` を置いている。
 
-| 環境 | アーカイブ |
+| 環境 | ターゲット |
 |---|---|
-| macOS（Apple Silicon） | `send-to-kindle-<タグ>-aarch64-apple-darwin.tar.gz` |
-| macOS（Intel） | `send-to-kindle-<タグ>-x86_64-apple-darwin.tar.gz` |
-| Linux（x86_64） | `send-to-kindle-<タグ>-x86_64-unknown-linux-gnu.tar.gz` |
+| macOS（Apple Silicon） | `aarch64-apple-darwin` |
+| macOS（Intel） | `x86_64-apple-darwin` |
+| Linux（x86_64） | `x86_64-unknown-linux-gnu` |
+
+アーカイブ名は `send-to-kindle-<タグ>-<ターゲット>.tar.gz` である。
+ダウンロードには `curl`、`gh`、ブラウザのどれを使ってもよい。
+macOSでは、`curl` か `gh` を使うと検疫の対処が要らない（後述）。
+
+#### `curl` でダウンロードする
+
+```sh
+tag=v0.1.0
+target=aarch64-apple-darwin
+archive="send-to-kindle-$tag-$target.tar.gz"
+curl -fsSLO "https://github.com/tett23/send-to-kindle/releases/download/$tag/$archive"
+curl -fsSLO "https://github.com/tett23/send-to-kindle/releases/download/$tag/SHA256SUMS"
+```
+
+#### `gh` でダウンロードする
+
+```sh
+tag=v0.1.0
+target=aarch64-apple-darwin
+archive="send-to-kindle-$tag-$target.tar.gz"
+gh release download "$tag" --repo tett23/send-to-kindle --pattern "$archive" --pattern SHA256SUMS
+```
+
+#### 展開して配置する
 
 チェックサムを確かめてから展開し、`PATH` の通ったディレクトリに置く。
 
 ```sh
-archive=send-to-kindle-v0.1.0-aarch64-apple-darwin.tar.gz
 grep "$archive" SHA256SUMS | shasum -a 256 -c   # Linuxでは sha256sum -c
 tar -xzf "$archive"
 mv "${archive%.tar.gz}/send-to-kindle" ~/.local/bin/
@@ -32,8 +56,9 @@ Apple Silicon向けのバイナリには、ビルド時に付くアドホック�
 
 ブラウザでダウンロードしたファイルには検疫属性（`com.apple.quarantine`）が付き、そのまま実行するとGatekeeperに止められる。
 展開したバイナリにも検疫属性は引き継がれる。
-`curl` などのコマンドでダウンロードした場合は、検疫属性は付かない。
+一方、`curl` や `gh` でダウンロードしたファイルには検疫属性が付かないため、そのまま実行できる。
 
+ブラウザでダウンロードした場合は、検疫を外す必要がある。
 検疫を外すと、そのバイナリを信頼して実行することになる。
 上のとおりチェックサムを確かめてから、次のコマンドで外す。
 
