@@ -193,3 +193,16 @@ fn fails_when_port_is_out_of_range() {
         "SMTP_PORT は 65535 以下で指定してください: 65536",
     );
 }
+
+#[test]
+fn shows_help() {
+    // 設定もファイルも無いディレクトリで実行する
+    let dir = TempDir::new().unwrap();
+    for option in ["--help", "-h"] {
+        let output = run(dir.path(), &[option]);
+        assert_eq!(output.status.code(), Some(0));
+        assert!(output.stderr.is_empty(), "{}", stderr(&output));
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        assert!(stdout.contains("使い方: send-to-kindle"), "{stdout}");
+    }
+}

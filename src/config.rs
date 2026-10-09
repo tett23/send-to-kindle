@@ -27,7 +27,7 @@ pub struct Dotenv {
     pub text: String,
 }
 
-const REQUIRED_KEYS: [&str; 6] = [
+pub const REQUIRED_KEYS: [&str; 6] = [
     "EMAIL",
     "SEND_TO_KINDLE_EMAIL",
     "SMTP_HOST",

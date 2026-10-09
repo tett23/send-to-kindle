@@ -4,6 +4,7 @@
 mod args;
 mod config;
 mod dotenv;
+mod help;
 mod mail;
 
 use std::io::ErrorKind;
@@ -45,7 +46,13 @@ fn run() -> Result<(), Failure> {
                 .map_err(|_| "引数を UTF-8 として読めません")
         })
         .collect::<Result<_, _>>()?;
-    let args::CliArgs { file, env_file } = args::parse_cli_args(&args)?;
+    let args::CliArgs { file, env_file } = match args::parse_cli_args(&args)? {
+        args::Command::Help => {
+            print!("{}", help::help());
+            return Ok(());
+        }
+        args::Command::Send(args) => args,
+    };
 
     let dotenv = read_dotenv(env_file.as_deref())?;
     let config = config::load_config(dotenv.as_ref(), |key| std::env::var(key).ok())?;
