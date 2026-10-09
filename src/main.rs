@@ -8,6 +8,7 @@ mod help;
 mod mail;
 
 use std::io::ErrorKind;
+use std::path::Path;
 use std::process::ExitCode;
 
 use lettre::message::header::ContentType;
@@ -16,7 +17,7 @@ use lettre::transport::smtp::authentication::Credentials;
 use lettre::transport::smtp::client::{Tls, TlsParameters};
 use lettre::{Message, SmtpTransport, Transport};
 
-use crate::config::{Config, Dotenv};
+use crate::config::{Config, Source};
 use crate::mail::Mail;
 
 /// エラーの表示と終了コードは main でまとめて扱う。
@@ -54,8 +55,7 @@ fn run() -> Result<(), Failure> {
         args::Command::Send(args) => args,
     };
 
-    let dotenv = read_dotenv(env_file.as_deref())?;
-    let config = config::load_config(dotenv.as_ref(), |key| std::env::var(key).ok())?;
+    let config = config::load_config(&read_sources(env_file.as_deref())?)?;
 
     let cwd = std::env::current_dir()
         .map_err(|e| format!("カレントディレクトリを取得できません: {e}"))?;
@@ -73,20 +73,34 @@ fn run() -> Result<(), Failure> {
     Ok(())
 }
 
-/// 設定を読む .env。--env-file を指定しておらず、カレントディレクトリにも .env が無ければ
-/// None（環境変数を使う）。指定したファイルが無ければエラーにする
-fn read_dotenv(env_file: Option<&str>) -> Result<Option<Dotenv>, Failure> {
-    let path = env_file.unwrap_or(".env");
+/// 設定を読む場所を、優先順位の高い順に読む（ADR 0008）。
+/// --env-file で指定したファイルが無ければエラーにし、それ以外のファイルは無ければ読まない
+fn read_sources(env_file: Option<&str>) -> Result<Vec<Source>, Failure> {
+    let get_env = |key: &str| std::env::var(key).ok();
+    let mut sources = Vec::new();
+    if let Some(path) = env_file {
+        let text = read_optional(Path::new(path))?
+            .ok_or_else(|| format!("指定した .env がありません: {path}"))?;
+        sources.push(Source::dotenv(path, &text));
+    }
+    sources.push(Source::env(get_env));
+    if let Some(text) = read_optional(Path::new(".env"))? {
+        sources.push(Source::dotenv(".env", &text));
+    }
+    if let Some(path) = config::user_config_path(get_env)
+        && let Some(text) = read_optional(&path)?
+    {
+        sources.push(Source::dotenv(&path.display().to_string(), &text));
+    }
+    Ok(sources)
+}
+
+/// ファイルを読む。無ければ None。
+fn read_optional(path: &Path) -> Result<Option<String>, Failure> {
     match std::fs::read_to_string(path) {
-        Ok(text) => Ok(Some(Dotenv {
-            path: path.to_owned(),
-            text,
-        })),
-        Err(e) if e.kind() == ErrorKind::NotFound => match env_file {
-            Some(env_file) => Err(format!("指定した .env がありません: {env_file}").into()),
-            None => Ok(None),
-        },
-        Err(e) => Err(format!("{path} を読めません: {e}").into()),
+        Ok(text) => Ok(Some(text)),
+        Err(e) if e.kind() == ErrorKind::NotFound => Ok(None),
+        Err(e) => Err(format!("{} を読めません: {e}", path.display()).into()),
     }
 }
 

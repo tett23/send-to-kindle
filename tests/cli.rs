@@ -18,6 +18,17 @@ fn run(cwd: &Path, args: &[&str]) -> Output {
         .unwrap()
 }
 
+/// 環境変数を空にしてから `envs` だけを設定し、`cwd` で実行する。
+fn run_with_env(cwd: &Path, args: &[&str], envs: &[(&str, &str)]) -> Output {
+    Command::new(BIN)
+        .args(args)
+        .current_dir(cwd)
+        .env_clear()
+        .envs(envs.iter().copied())
+        .output()
+        .unwrap()
+}
+
 fn stderr(output: &Output) -> String {
     String::from_utf8_lossy(&output.stderr).into_owned()
 }
@@ -67,7 +78,7 @@ fn fails_when_config_is_missing() {
     let dir = TempDir::new().unwrap();
     assert_failure(
         &run(dir.path(), &["book.epub"]),
-        "環境変数に次の設定がありません: EMAIL",
+        "次の設定がありません: EMAIL",
     );
 }
 
@@ -204,5 +215,120 @@ fn shows_help() {
         assert!(output.stderr.is_empty(), "{}", stderr(&output));
         let stdout = String::from_utf8_lossy(&output.stdout);
         assert!(stdout.contains("使い方: send-to-kindle"), "{stdout}");
+    }
+}
+
+mod layered_config {
+    use super::*;
+
+    /// 一時ディレクトリに、ホーム（`home`）、作業ディレクトリ（`work`、送るファイル入り）を作る。
+    struct Env {
+        root: TempDir,
+    }
+
+    impl Env {
+        fn new() -> Env {
+            let root = TempDir::new().unwrap();
+            std::fs::create_dir_all(root.path().join("work")).unwrap();
+            std::fs::write(root.path().join("work/book.epub"), "x").unwrap();
+            Env { root }
+        }
+
+        fn path(&self, path: &str) -> String {
+            self.root.path().join(path).to_string_lossy().into_owned()
+        }
+
+        fn write(&self, path: &str, content: &str) {
+            let path = self.root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, content).unwrap();
+        }
+
+        fn run(&self, args: &[&str], envs: &[(&str, &str)]) -> Output {
+            let home = self.path("home");
+            let mut all = vec![("HOME", home.as_str())];
+            all.extend_from_slice(envs);
+            run_with_env(&self.root.path().join("work"), args, &all)
+        }
+    }
+
+    const USER_CONFIG: &str = "home/.config/send-to-kindle/.env";
+
+    #[test]
+    fn reads_user_config_under_home() {
+        let env = Env::new();
+        let (port, server) = smtp_server();
+        env.write(USER_CONFIG, &dotenv(port));
+        let output = env.run(&["book.epub"], &[]);
+        assert!(output.status.success(), "{}", stderr(&output));
+        assert!(server.join().unwrap().contains("RCPT TO:<me@kindle.com>"));
+    }
+
+    #[test]
+    fn reads_user_config_under_xdg_config_home() {
+        let env = Env::new();
+        let (port, server) = smtp_server();
+        env.write(USER_CONFIG, &dotenv(1));
+        env.write(
+            "xdg/send-to-kindle/.env",
+            &dotenv(port).replace("me@kindle.com", "xdg@kindle.com"),
+        );
+        let xdg = env.path("xdg");
+        let output = env.run(&["book.epub"], &[("XDG_CONFIG_HOME", &xdg)]);
+        assert!(output.status.success(), "{}", stderr(&output));
+        assert!(server.join().unwrap().contains("RCPT TO:<xdg@kindle.com>"));
+    }
+
+    #[test]
+    fn current_directory_dotenv_overrides_user_config_per_key() {
+        let env = Env::new();
+        let (port, server) = smtp_server();
+        env.write(USER_CONFIG, &dotenv(port));
+        env.write("work/.env", "SEND_TO_KINDLE_EMAIL=cwd@kindle.com\n");
+        let output = env.run(&["book.epub"], &[]);
+        assert!(output.status.success(), "{}", stderr(&output));
+        assert!(server.join().unwrap().contains("RCPT TO:<cwd@kindle.com>"));
+    }
+
+    #[test]
+    fn environment_overrides_dotenv_files() {
+        let env = Env::new();
+        let (port, server) = smtp_server();
+        env.write(USER_CONFIG, &dotenv(port));
+        env.write("work/.env", "SEND_TO_KINDLE_EMAIL=cwd@kindle.com\n");
+        let output = env.run(
+            &["book.epub"],
+            &[("SEND_TO_KINDLE_EMAIL", "env@kindle.com")],
+        );
+        assert!(output.status.success(), "{}", stderr(&output));
+        assert!(server.join().unwrap().contains("RCPT TO:<env@kindle.com>"));
+    }
+
+    #[test]
+    fn env_file_overrides_environment() {
+        let env = Env::new();
+        let (port, server) = smtp_server();
+        env.write(USER_CONFIG, &dotenv(port));
+        env.write("work/kindle.env", "SEND_TO_KINDLE_EMAIL=file@kindle.com\n");
+        let output = env.run(
+            &["--env-file", "kindle.env", "book.epub"],
+            &[("SEND_TO_KINDLE_EMAIL", "env@kindle.com")],
+        );
+        assert!(output.status.success(), "{}", stderr(&output));
+        assert!(server.join().unwrap().contains("RCPT TO:<file@kindle.com>"));
+    }
+
+    #[test]
+    fn missing_keys_error_lists_sources_in_priority_order() {
+        let env = Env::new();
+        env.write(USER_CONFIG, "EMAIL=me@example.com\n");
+        env.write("work/.env", "SMTP_HOST=smtp.example.com\n");
+        let user_config = env.path(USER_CONFIG);
+        assert_failure(
+            &env.run(&["book.epub"], &[]),
+            &format!(
+                "次の設定がありません: SEND_TO_KINDLE_EMAIL, SMTP_PORT, SMTP_USER_NAME, SMTP_PASSWORD（読んだ場所: 環境変数, .env, {user_config}）"
+            ),
+        );
     }
 }
