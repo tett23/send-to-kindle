@@ -1,0 +1,3 @@
+#!/bin/sh
+# コミット済みのADR（docs/adr/）は「ステータス:」の行を除いて変更・削除できない。
+exec cargo run --quiet --manifest-path "$(git rev-parse --show-toplevel)/tools/adr-guard/Cargo.toml" -- pre-commit
