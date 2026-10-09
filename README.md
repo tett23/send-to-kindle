@@ -86,13 +86,12 @@ send-to-kindle [--env-file <パス>] <ファイル>
 設定は `--env-file`（短縮形 `-e`）で指定したファイルから読む。
 指定しなければカレントディレクトリの `.env` から、それも無ければ環境変数から読む。
 
+設定の例は [.env.example](.env.example) にある。コピーして値を書きかえる。
+
 ```sh
-EMAIL=me@example.com               # 送信元（Kindleの承認済みアドレス）
-SEND_TO_KINDLE_EMAIL=me@kindle.com # Kindleのメールアドレス
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USER_NAME=user
-SMTP_PASSWORD=secret
+mkdir -p ~/.config/send-to-kindle
+cp .env.example ~/.config/send-to-kindle/.env
+send-to-kindle --env-file ~/.config/send-to-kindle/.env book.epub
 ```
 
 オプションや設定の一覧は `send-to-kindle --help` で表示できる。
