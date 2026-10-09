@@ -88,7 +88,7 @@ mod tests {
             to: "me@kindle.com".into(),
             smtp: Smtp {
                 host: "smtp.example.com".into(),
-                port: "587".into(),
+                port: 587,
                 user: "user".into(),
                 pass: "secret".into(),
             },

@@ -99,19 +99,15 @@ fn send(config: &Config, mail: &Mail, body: Vec<u8>) -> Result<(), Box<dyn std::
         )?;
 
     let smtp = &config.smtp;
-    let port: u16 = smtp
-        .port
-        .parse()
-        .map_err(|_| format!("ポート番号として使えません: {}", smtp.port))?;
     let tls_parameters = TlsParameters::new(smtp.host.clone())?;
     // nodemailer の既定に合わせ、465 は最初から TLS、それ以外は対応していれば STARTTLS にする
-    let tls = if port == 465 {
+    let tls = if smtp.port == 465 {
         Tls::Wrapper(tls_parameters)
     } else {
         Tls::Opportunistic(tls_parameters)
     };
     let transport = SmtpTransport::builder_dangerous(&smtp.host)
-        .port(port)
+        .port(smtp.port)
         .tls(tls)
         .credentials(Credentials::new(smtp.user.clone(), smtp.pass.clone()))
         .build();

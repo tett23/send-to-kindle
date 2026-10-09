@@ -190,6 +190,6 @@ fn fails_when_port_is_out_of_range() {
     std::fs::write(dir.path().join("book.epub"), "x").unwrap();
     assert_failure(
         &run(dir.path(), &["book.epub"]),
-        "送信できませんでした: ポート番号として使えません: 65536",
+        "SMTP_PORT は 65535 以下で指定してください: 65536",
     );
 }

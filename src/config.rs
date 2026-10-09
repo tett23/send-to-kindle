@@ -16,8 +16,7 @@ pub struct Config {
 #[derive(Debug, PartialEq, Eq)]
 pub struct Smtp {
     pub host: String,
-    /// 正の整数であることだけを検証した値。ポート番号の範囲は送信時に検証する
-    pub port: String,
+    pub port: u16,
     pub user: String,
     pub pass: String,
 }
@@ -78,6 +77,10 @@ fn validate(mut values: HashMap<&str, String>, source: &str) -> Result<Config, S
     if !is_positive_integer(port) {
         return Err(format!("SMTP_PORT は正の整数で指定してください: {port}"));
     }
+    // 正の整数で u16 に収まらないものは、65535 より大きい
+    let Ok(port) = port.parse::<u16>() else {
+        return Err(format!("SMTP_PORT は 65535 以下で指定してください: {port}"));
+    };
 
     let mut take = |key| values.remove(key).unwrap_or_default();
     Ok(Config {
@@ -85,7 +88,7 @@ fn validate(mut values: HashMap<&str, String>, source: &str) -> Result<Config, S
         to: take("SEND_TO_KINDLE_EMAIL"),
         smtp: Smtp {
             host: take("SMTP_HOST"),
-            port: take("SMTP_PORT"),
+            port,
             user: take("SMTP_USER_NAME"),
             pass: take("SMTP_PASSWORD"),
         },
@@ -140,7 +143,7 @@ SMTP_PASSWORD=secret
                 to: "me@kindle.com".into(),
                 smtp: Smtp {
                     host: "smtp.example.com".into(),
-                    port: "587".into(),
+                    port: 587,
                     user: "user".into(),
                     pass: "secret".into(),
                 },
@@ -157,7 +160,7 @@ SMTP_PASSWORD=secret
                 to: "env@kindle.com".into(),
                 smtp: Smtp {
                     host: "smtp.env.example.com".into(),
-                    port: "465".into(),
+                    port: 465,
                     user: "env-user".into(),
                     pass: "env-secret".into(),
                 },
@@ -203,6 +206,30 @@ SMTP_PASSWORD=secret
             assert_eq!(
                 load_config(None, from_env(env)),
                 Err(format!("SMTP_PORT は正の整数で指定してください: {port}")),
+            );
+        }
+    }
+
+    #[test]
+    fn accepts_port_range_bounds() {
+        for (value, port) in [("1", 1), ("65535", 65535)] {
+            let mut env = test_env();
+            env.insert("SMTP_PORT", value);
+            assert_eq!(
+                load_config(None, from_env(env)).map(|c| c.smtp.port),
+                Ok(port)
+            );
+        }
+    }
+
+    #[test]
+    fn rejects_port_above_range() {
+        for port in ["65536", "99999999999999999999"] {
+            let mut env = test_env();
+            env.insert("SMTP_PORT", port);
+            assert_eq!(
+                load_config(None, from_env(env)),
+                Err(format!("SMTP_PORT は 65535 以下で指定してください: {port}")),
             );
         }
     }
