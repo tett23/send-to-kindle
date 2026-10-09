@@ -1,5 +1,7 @@
 # send-to-kindle
 
+[![CI](https://github.com/tett23/send-to-kindle/actions/workflows/ci.yml/badge.svg)](https://github.com/tett23/send-to-kindle/actions/workflows/ci.yml)
+
 ファイルをKindleのメールアドレスへ添付して送るコマンド。
 
 ## インストール

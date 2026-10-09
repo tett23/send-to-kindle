@@ -83,9 +83,19 @@ send-to-kindle [--env-file <パス>] <ファイル>
 - 実装の前に `docs/adr/` にADRを作成し、人間のレビューを経てからコミットする。
 - ファイル名は `0001-feature-details.md` の形式（4桁の連番＋kebab-case）とする。
 - コミット済みのADRはステータスの行を除いて変更できない。仕様を変更する場合は新しいADRを作成する。
-- この制約は次の二つのhookで強制する。検査はRust製の `tools/adr-guard` が担う（ADR 0001）。
+- この制約は次の三か所で強制する。検査はRust製の `tools/adr-guard` が担う（ADR 0001、0004）。
   - gitのpre-commit hook（`.githooks/pre-commit`）
   - Claude CodeのPreToolUse hook（`.claude/settings.json`）
+  - CI（`adr-guard check-range`）。範囲内のマージ以外の各コミットを、親コミットとの差分で検査する。
+    範囲内で一度でもADRを書きかえたコミットがあれば、後のコミットで戻していても失敗する。
+
+### CI
+
+- GitHub Actions（`.github/workflows/ci.yml`）で、`main` へのpushとプルリクエストのときに実行する（ADR 0004）。
+- `rust` ジョブ：リポジトリ直下と `tools/adr-guard` のそれぞれで、`cargo fmt --check`、`cargo clippy --all-targets -- -D warnings`、`cargo test` を実行する。
+- `adr` ジョブ：コミット済みのADRが変更されていないことを検査する。範囲は次のとおり。
+  - プルリクエスト：ベースブランチの先端からプルリクエストの先端まで
+  - `main` へのpush：push前の先端からpush後の先端まで。push前の先端が無ければルートコミットから
 
 ### 依存の方針
 
