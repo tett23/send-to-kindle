@@ -106,7 +106,7 @@ send-to-kindle --help
 - 手順：`Cargo.toml` の `version` を更新してコミットし、`v<version>` のタグをpushする。
 - タグが `v<Cargo.toml の version>` と一致しなければ失敗する。一致すれば `cargo test --locked` を実行してからビルドする。
 - 成果物
-  - 次のターゲットごとの `send-to-kindle-<タグ>-<ターゲット>.tar.gz`。中身はバイナリ、`LICENSE`、`README.md`。
+  - 次のターゲットごとの `send-to-kindle-<タグ>-<ターゲット>.tar.gz`。中身はバイナリ、`LICENSE`、`README.md`、`.env.example`（ADR 0007）。アーカイブを作ったあと、これらがそろっていることを確かめ、欠けていれば失敗する。
     - `aarch64-apple-darwin`
     - `x86_64-apple-darwin`
     - `x86_64-unknown-linux-gnu`

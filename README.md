@@ -42,11 +42,14 @@ gh release download "$tag" --repo tett23/send-to-kindle --pattern "$archive" --p
 #### 展開して配置する
 
 チェックサムを確かめてから展開し、`PATH` の通ったディレクトリに置く。
+アーカイブには設定の例 `.env.example` も入っているので、設定ファイルの置き場所へコピーして値を書きかえる（v0.1.0 のアーカイブには入っていない）。
 
 ```sh
 grep "$archive" SHA256SUMS | shasum -a 256 -c   # Linuxでは sha256sum -c
 tar -xzf "$archive"
 mv "${archive%.tar.gz}/send-to-kindle" ~/.local/bin/
+mkdir -p ~/.config/send-to-kindle
+cp "${archive%.tar.gz}/.env.example" ~/.config/send-to-kindle/.env
 ```
 
 #### 署名と検疫（macOS）
@@ -86,7 +89,7 @@ send-to-kindle [--env-file <パス>] <ファイル>
 設定は `--env-file`（短縮形 `-e`）で指定したファイルから読む。
 指定しなければカレントディレクトリの `.env` から、それも無ければ環境変数から読む。
 
-設定の例は [.env.example](.env.example) にある。コピーして値を書きかえる。
+設定の例は [.env.example](.env.example) にある（リリースのアーカイブにも入っている）。コピーして値を書きかえる。
 
 ```sh
 mkdir -p ~/.config/send-to-kindle
