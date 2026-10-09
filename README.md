@@ -101,6 +101,30 @@ send-to-kindle --env-file ~/.config/send-to-kindle/.env book.epub
 件名「変換」で送るため、KindleはファイルをKindleの形式に変換する。
 詳しい挙動は [docs/specifications.md](docs/specifications.md) を参照。
 
+### GmailのSMTPを使う
+
+Gmailから送る場合は、Googleアカウントのパスワードではなく「アプリ パスワード」を使う。
+
+1. Googleアカウントで2段階認証プロセスを有効にする。アプリ パスワードは、2段階認証プロセスを有効にしたアカウントでしか作れない。
+2. [アプリ パスワード](https://myaccount.google.com/apppasswords)のページを開き、アプリ名（例：`send-to-kindle`）を入力して作成する。
+3. 表示された16文字のパスワードを `SMTP_PASSWORD` に設定する。パスワードは作成時にしか表示されないので、すぐに控える。表示に含まれる空白は取り除く。
+
+詳しくはGoogleのヘルプ「[アプリ パスワードでログインする](https://support.google.com/accounts/answer/185833)」を参照。
+職場や学校のアカウント（Google Workspace）では、管理者がアプリ パスワードを無効にしていると作成できない。
+
+設定は次のようにする。
+
+```sh
+EMAIL=you@gmail.com
+SEND_TO_KINDLE_EMAIL=you@kindle.com
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER_NAME=you@gmail.com
+SMTP_PASSWORD=abcdefghijklmnop
+```
+
+`EMAIL` のGmailアドレスは、Amazonの「コンテンツと端末の管理」→「設定」→「パーソナル・ドキュメント設定」で、承認済みEメールアドレスに追加しておく。
+
 ## 開発
 
 クローン後、gitのhookを有効化する。
