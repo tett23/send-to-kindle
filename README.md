@@ -28,6 +28,7 @@ SMTP_USER_NAME=user
 SMTP_PASSWORD=secret
 ```
 
+オプションや設定の一覧は `send-to-kindle --help` で表示できる。
 件名「変換」で送るため、KindleはファイルをKindleの形式に変換する。
 詳しい挙動は [docs/specifications.md](docs/specifications.md) を参照。
 
