@@ -17,10 +17,14 @@ pub fn help() -> String {
   -h, --help             このヘルプを表示する
 
 設定:
-  次の順に、最初に見つかったところから読む。.env から読むときは、足りない項目を環境変数で補わない。
+  次の場所を、この優先順位で読む。項目ごとに、優先順位の高い場所から順に探し、
+  最初に見つかった値を使う（空文字は無いものとして扱う）。場所ごとに一部の項目だけを書いてよい。
     1. --env-file で指定したファイル
-    2. カレントディレクトリの .env
-    3. 環境変数
+    2. 環境変数
+    3. カレントディレクトリの .env
+    4. ユーザーの設定ファイル
+       $XDG_CONFIG_HOME/send-to-kindle/.env（XDG_CONFIG_HOME が絶対パスのとき）
+       それ以外は ~/.config/send-to-kindle/.env
 
   EMAIL                 送信元のメールアドレス（Kindle の承認済みアドレス）
   SEND_TO_KINDLE_EMAIL  Kindle のメールアドレス
@@ -38,7 +42,8 @@ pub fn help() -> String {
 
 例:
   send-to-kindle book.epub
-  send-to-kindle --env-file ~/.config/send-to-kindle/.env book.epub
+  send-to-kindle --env-file ./kindle.env book.epub
+  SMTP_PASSWORD=... send-to-kindle book.epub
 ",
         version = env!("CARGO_PKG_VERSION"),
     )
@@ -54,6 +59,13 @@ mod tests {
         let help = help();
         assert!(help.contains(USAGE));
         assert!(help.starts_with(&format!("send-to-kindle {}\n", env!("CARGO_PKG_VERSION"))));
+    }
+
+    #[test]
+    fn contains_user_config_path() {
+        let help = help();
+        assert!(help.contains("~/.config/send-to-kindle/.env"));
+        assert!(help.contains("$XDG_CONFIG_HOME/send-to-kindle/.env"));
     }
 
     #[test]

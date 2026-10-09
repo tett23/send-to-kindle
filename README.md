@@ -86,16 +86,30 @@ cargo install --path .
 send-to-kindle [--env-file <パス>] <ファイル>
 ```
 
-設定は `--env-file`（短縮形 `-e`）で指定したファイルから読む。
-指定しなければカレントディレクトリの `.env` から、それも無ければ環境変数から読む。
+設定は次の場所から読む。上ほど優先し、項目ごとに最初に見つかった値を使う。
 
+1. `--env-file`（短縮形 `-e`）で指定したファイル
+2. 環境変数
+3. カレントディレクトリの `.env`
+4. ユーザーの設定ファイル `~/.config/send-to-kindle/.env`（`XDG_CONFIG_HOME` を設定していれば `$XDG_CONFIG_HOME/send-to-kindle/.env`）
+
+ふだんはユーザーの設定ファイルにすべての項目を書いておけば、オプションなしで使える。
 設定の例は [.env.example](.env.example) にある（リリースのアーカイブにも入っている）。コピーして値を書きかえる。
 
 ```sh
 mkdir -p ~/.config/send-to-kindle
 cp .env.example ~/.config/send-to-kindle/.env
-send-to-kindle --env-file ~/.config/send-to-kindle/.env book.epub
+send-to-kindle book.epub
 ```
+
+一部の項目だけを環境変数やカレントディレクトリの `.env` で上書きすることもできる。
+
+```sh
+SEND_TO_KINDLE_EMAIL=other@kindle.com send-to-kindle book.epub
+```
+
+`EMAIL` は、gitなどほかのツールのためにシェルで設定されていることがある。
+その場合はユーザーの設定ファイルの値より優先されるので、`unset EMAIL` するか、`--env-file` で設定ファイルを指定する。
 
 オプションや設定の一覧は `send-to-kindle --help` で表示できる。
 件名「変換」で送るため、KindleはファイルをKindleの形式に変換する。
