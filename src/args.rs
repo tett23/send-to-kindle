@@ -3,12 +3,27 @@
 pub const USAGE: &str = "使い方: send-to-kindle [--env-file <パス>] <ファイル>";
 
 #[derive(Debug, PartialEq, Eq)]
+pub enum Command {
+    Help,
+    Send(CliArgs),
+}
+
+#[derive(Debug, PartialEq, Eq)]
 pub struct CliArgs {
     pub file: String,
     pub env_file: Option<String>,
 }
 
-pub fn parse_cli_args(args: &[String]) -> Result<CliArgs, String> {
+pub fn parse_cli_args(args: &[String]) -> Result<Command, String> {
+    // `--` より前に -h / --help があれば、ほかの引数にかかわらずヘルプを表示する
+    if args
+        .iter()
+        .take_while(|arg| *arg != "--")
+        .any(|arg| arg == "-h" || arg == "--help")
+    {
+        return Ok(Command::Help);
+    }
+
     let with_usage = |message: String| format!("{message}\n{USAGE}");
 
     let mut positionals = Vec::new();
@@ -32,7 +47,7 @@ pub fn parse_cli_args(args: &[String]) -> Result<CliArgs, String> {
     }
 
     match <[String; 1]>::try_from(positionals) {
-        Ok([file]) => Ok(CliArgs { file, env_file }),
+        Ok([file]) => Ok(Command::Send(CliArgs { file, env_file })),
         Err(_) => Err(USAGE.to_owned()),
     }
 }
@@ -41,15 +56,15 @@ pub fn parse_cli_args(args: &[String]) -> Result<CliArgs, String> {
 mod tests {
     use super::*;
 
-    fn parse(args: &[&str]) -> Result<CliArgs, String> {
+    fn parse(args: &[&str]) -> Result<Command, String> {
         parse_cli_args(&args.iter().map(|a| a.to_string()).collect::<Vec<_>>())
     }
 
-    fn ok(file: &str, env_file: Option<&str>) -> Result<CliArgs, String> {
-        Ok(CliArgs {
+    fn ok(file: &str, env_file: Option<&str>) -> Result<Command, String> {
+        Ok(Command::Send(CliArgs {
             file: file.to_owned(),
             env_file: env_file.map(str::to_owned),
-        })
+        }))
     }
 
     #[test]
@@ -114,5 +129,28 @@ mod tests {
     #[test]
     fn single_dash_is_file() {
         assert_eq!(parse(&["-"]), ok("-", None));
+    }
+
+    #[test]
+    fn help_options() {
+        assert_eq!(parse(&["-h"]), Ok(Command::Help));
+        assert_eq!(parse(&["--help"]), Ok(Command::Help));
+    }
+
+    #[test]
+    fn help_wins_over_other_arguments() {
+        for args in [
+            &["--help", "book.epub", "-e", "kindle.env"][..],
+            &["book.epub", "--env-file=kindle.env", "-h"],
+            &["--unknown", "--help"],
+            &["a.epub", "b.epub", "-h"],
+        ] {
+            assert_eq!(parse(args), Ok(Command::Help), "{args:?}");
+        }
+    }
+
+    #[test]
+    fn help_after_double_dash_is_file() {
+        assert_eq!(parse(&["--", "--help"]), ok("--help", None));
     }
 }
