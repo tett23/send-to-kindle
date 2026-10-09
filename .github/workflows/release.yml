@@ -65,8 +65,16 @@ jobs:
         run: |
           name="send-to-kindle-$TAG-$TARGET"
           mkdir "$name"
-          cp "target/$TARGET/release/send-to-kindle" LICENSE README.md "$name/"
+          cp "target/$TARGET/release/send-to-kindle" LICENSE README.md .env.example "$name/"
           tar -czf "$name.tar.gz" "$name"
+          # アーカイブに必要なファイルがそろっていることを確かめる (docs/adr/0007)
+          listing=$(tar -tzf "$name.tar.gz")
+          for file in send-to-kindle LICENSE README.md .env.example; do
+            if ! printf '%s\n' "$listing" | grep -qxF "$name/$file"; then
+              echo "::error::$name.tar.gz に $file がありません"
+              exit 1
+            fi
+          done
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ${{ matrix.target }}
