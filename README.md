@@ -145,7 +145,7 @@ SMTP_PASSWORD=abcdefghijklmnop
 adr-guard のインストール方法は、adr-guard のREADMEを参照。
 
 ```sh
-cargo install --git https://github.com/tett23/adr-guard --tag v0.1.0
+cargo install --git https://github.com/tett23/adr-guard --tag v0.2.1
 git config core.hooksPath .githooks
 ```
 
