@@ -118,6 +118,7 @@ send-to-kindle --help
     - `x86_64-unknown-linux-gnu`
   - すべてのアーカイブのSHA-256をまとめた `SHA256SUMS`
 - リリースのタイトルはタグ名、本文はGitHubの自動生成とする。
+- `-` を含むタグ（例：`v0.3.0-rc`）はプレリリースとして作成する。`Cargo.toml` の `version` も同じ形（例：`0.3.0-rc`）にする（ADR 0010）。
 - macOS向けのバイナリは、Apple Developer IDによる署名と公証を行わない。Apple Silicon向けにはリンカーによるアドホック署名だけが付く。検疫の外し方はREADMEに記載する。
 
 ### 依存の方針

@@ -99,4 +99,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" dist/* --title "$TAG" --generate-notes --verify-tag
+        run: |
+          # `-` を含むタグ（v0.3.0-rc など）はプレリリースにする (docs/adr/0010)
+          prerelease=()
+          case "$TAG" in *-*) prerelease=(--prerelease) ;; esac
+          gh release create "$TAG" dist/* --title "$TAG" --generate-notes --verify-tag "${prerelease[@]}"

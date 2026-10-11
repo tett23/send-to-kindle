@@ -165,6 +165,8 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
+`-` を含むタグ（例：`v0.3.0-rc`）はプレリリースになる。このときは `Cargo.toml` の `version` も `0.3.0-rc` にする。
+
 ## License
 
 [MIT](LICENSE)
