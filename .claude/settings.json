@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cargo run --quiet --manifest-path \"$CLAUDE_PROJECT_DIR\"/tools/adr-guard/Cargo.toml -- claude-hook"
+            "command": "adr-guard claude-hook"
           }
         ]
       }
