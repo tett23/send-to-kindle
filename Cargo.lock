@@ -432,7 +432,7 @@ dependencies = [
 
 [[package]]
 name = "send-to-kindle"
-version = "0.3.0-rc"
+version = "0.3.0"
 dependencies = [
  "lettre",
  "tempfile",
