@@ -102,7 +102,7 @@ send-to-kindle --help
 
 - GitHub Actions（`.github/workflows/ci.yml`）で、`main` へのpushとプルリクエストのときに実行する（ADR 0004）。
 - `rust` ジョブ：`cargo fmt --check`、`cargo clippy --all-targets -- -D warnings`、`cargo test` を実行する。
-- `adr` ジョブ：adr-guard のcomposite action（コミットのSHAで固定）で、コミット済みのADRが変更されていないことを検査する（ADR 0009）。範囲は次のとおり。
+- `adr` ジョブ：adr-guard のcomposite action（バージョンのタグで指定。現在は `v0.2.1`）で、コミット済みのADRが変更されていないことを検査する（ADR 0009、0011）。範囲は次のとおり。
   - プルリクエスト：ベースブランチの先端からプルリクエストの先端まで
   - `main` へのpush：push前の先端からpush後の先端まで。push前の先端が無ければルートコミットから
 
