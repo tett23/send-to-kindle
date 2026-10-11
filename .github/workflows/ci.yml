@@ -1,4 +1,4 @@
-# docs/adr/0004
+# docs/adr/0004, 0009
 name: CI
 
 on:
@@ -15,19 +15,7 @@ concurrency:
 
 jobs:
   rust:
-    name: rust (${{ matrix.name }})
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: send-to-kindle
-            dir: .
-          - name: adr-guard
-            dir: tools/adr-guard
-    defaults:
-      run:
-        working-directory: ${{ matrix.dir }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -41,8 +29,8 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            ${{ matrix.dir }}/target
-          key: ${{ runner.os }}-cargo-${{ matrix.name }}-${{ hashFiles(format('{0}/Cargo.lock', matrix.dir)) }}
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
       - run: cargo fmt --check
       - run: cargo clippy --all-targets -- -D warnings
       - run: cargo test
@@ -54,19 +42,8 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Install Rust
-        run: |
-          rustup toolchain install stable --profile minimal
-          rustup default stable
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      # docs/adr/0009
+      - uses: tett23/adr-guard@e725766610934cd887628331766fb94ae264196a # v0.1.0
         with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            tools/adr-guard/target
-          key: ${{ runner.os }}-cargo-adr-guard-${{ hashFiles('tools/adr-guard/Cargo.lock') }}
-      - name: Check committed ADRs
-        env:
-          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
-          HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
-        run: cargo run --quiet --manifest-path tools/adr-guard/Cargo.toml -- check-range "$BASE_SHA" "$HEAD_SHA"
+          base: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          head: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}

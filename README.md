@@ -141,17 +141,19 @@ SMTP_PASSWORD=abcdefghijklmnop
 
 ## 開発
 
-クローン後、gitのhookを有効化する。
+[adr-guard](https://github.com/tett23/adr-guard) をインストールし、クローン後にgitのhookを有効化する。
+adr-guard のインストール方法は、adr-guard のREADMEを参照。
 
 ```sh
+cargo install --git https://github.com/tett23/adr-guard --tag v0.1.0
 git config core.hooksPath .githooks
 ```
 
 テストは `cargo test` で実行する。
 
 設計判断は `docs/adr/` にADRとして記録する。
-コミット済みのADRはステータスの行を除いて変更できず、pre-commit hook、Claude Codeのhook、CIで強制される。
-hookの実行にはRustツールチェイン（`cargo`）が必要。
+コミット済みのADRはステータスの行を除いて変更できず、adr-guard によって、pre-commit hook、Claude Codeのhook、CIで強制される。
+adr-guard が手元に無いと、pre-commit hookはコミットを拒否し、Claude Codeのhookは編集を止めない。
 
 ### リリース
 
