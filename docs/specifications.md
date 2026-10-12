@@ -102,9 +102,10 @@ send-to-kindle --help
 
 - GitHub Actions（`.github/workflows/ci.yml`）で、`main` へのpushとプルリクエストのときに実行する（[ADR 0004](adr/0004-continuous-integration.md)）。
 - `rust` ジョブ：`cargo fmt --check`、`cargo clippy --all-targets -- -D warnings`、`cargo test` を実行する。
-- `adr` ジョブ：adr-guard のcomposite action（バージョンのタグで指定。現在は `v0.2.1`）で、コミット済みのADRが変更されていないことを検査する（[ADR 0009](adr/0009-use-external-adr-guard.md)、[0011](adr/0011-pin-adr-guard-action-by-version.md)）。範囲は次のとおり。
+- `adr` ジョブ：adr-guard のcomposite action（バージョンのタグで指定。現在は `v0.3.0`）で、コミット済みのADRが変更されていないことを検査する（[ADR 0009](adr/0009-use-external-adr-guard.md)、[0011](adr/0011-pin-adr-guard-action-by-version.md)、[0012](adr/0012-update-adr-guard-to-v0.3.0.md)）。範囲は次のとおり。
   - プルリクエスト：ベースブランチの先端からプルリクエストの先端まで
   - `main` へのpush：push前の先端からpush後の先端まで。push前の先端が無ければルートコミットから
+  - コミットメッセージのトレーラーに `ADR-Guard-Allow: <理由>` があるコミットは、ADRの書きかえを意図したものとして許可する（[ADR 0012](adr/0012-update-adr-guard-to-v0.3.0.md)）。
 
 ### リリース
 
