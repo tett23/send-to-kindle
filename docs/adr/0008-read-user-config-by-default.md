@@ -4,7 +4,7 @@
 
 ## 文脈
 
-ADR 0002 で、設定は次の順に探し、最初に見つかった1か所だけから読むと定めた（移植元と同じ）。
+[ADR 0002](0002-port-send-to-kindle-to-rust.md) で、設定は次の順に探し、最初に見つかった1か所だけから読むと定めた（移植元と同じ）。
 
 1. `--env-file` で指定したファイル
 2. カレントディレクトリの `.env`
@@ -50,7 +50,7 @@ READMEでは、設定を `~/.config/send-to-kindle/.env` に置き、`--env-file
   次の設定がありません: SMTP_HOST, SMTP_PASSWORD（読んだ場所: 環境変数, .env, /Users/me/.config/send-to-kindle/.env）
   ```
 
-- `SMTP_PORT` の値のエラー（ADR 0002、0003）の文面は変えない。
+- `SMTP_PORT` の値のエラー（[ADR 0002](0002-port-send-to-kindle-to-rust.md)、[0003](0003-validate-smtp-port-range.md)）の文面は変えない。
 
 ### 構成
 
@@ -59,15 +59,15 @@ READMEでは、設定を `~/.config/send-to-kindle/.env` に置き、`--env-file
 
 ### ドキュメント
 
-- ヘルプ（ADR 0005）の「設定」の説明を、読む場所・優先順位・項目ごとに重ねることに合わせて更新する。
+- ヘルプ（[ADR 0005](0005-cli-help.md)）の「設定」の説明を、読む場所・優先順位・項目ごとに重ねることに合わせて更新する。
 - `docs/specifications.md` と `README.md` を更新する。READMEの設定の手順は、`.env.example` を `~/.config/send-to-kindle/.env` にコピーすれば `--env-file` なしで使える形にする。`.env.example` の冒頭のコメントも同様に更新する。
-- ADR 0002 のステータスを `採択→0003、0005、0006、0008` にする。
+- [ADR 0002](0002-port-send-to-kindle-to-rust.md) のステータスを `採択→0003、0005、0006、0008` にする。
 
 ## 実装しないこと
 
 - ユーザーの設定ファイルの自動作成や、対話的な設定コマンド。
 - `/etc` などシステム全体の設定ファイル。
-- Windowsでの設定ファイルの場所（`%APPDATA%` など）。配布するバイナリにWindows向けは無い（ADR 0006）。
+- Windowsでの設定ファイルの場所（`%APPDATA%` など）。配布するバイナリにWindows向けは無い（[ADR 0006](0006-release-binaries.md)）。
 - 特定の場所を読まないようにするオプション。
 - 設定項目の名前の変更（`SEND_TO_KINDLE_` などの接頭辞を付けること）。
 - 設定ファイルの権限（ほかのユーザーから読めるかなど）の検査。
@@ -80,7 +80,7 @@ READMEでは、設定を `~/.config/send-to-kindle/.env` に置き、`--env-file
   - 場所ごとに一部の項目だけがあれば、項目ごとに別の場所から集めて設定になる。
   - 空文字の値は無いものとして、次の場所の値を使う。
   - どの場所にも無い項目は、読んだ場所を優先順位の順に並べたエラーになる。
-  - `SMTP_PORT` の検証（ADR 0002、0003）は、解決したあとの値に対してこれまでどおり行う。
+  - `SMTP_PORT` の検証（[ADR 0002](0002-port-send-to-kindle-to-rust.md)、[0003](0003-validate-smtp-port-range.md)）は、解決したあとの値に対してこれまでどおり行う。
 - ユーザーの設定ファイルのパス（単体テスト）
   - `XDG_CONFIG_HOME` が絶対パスなら `$XDG_CONFIG_HOME/send-to-kindle/.env` になる。
   - `XDG_CONFIG_HOME` が無い、空、または相対パスなら `$HOME/.config/send-to-kindle/.env` になる。
@@ -93,7 +93,7 @@ READMEでは、設定を `~/.config/send-to-kindle/.env` に置き、`--env-file
   - `--env-file` の値は、環境変数の値より優先される。
   - 足りない項目のエラーに、読んだ場所が優先順位の順に出る。
 - ヘルプに、ユーザーの設定ファイルのパスと優先順位が含まれる。
-- 既存のテストのうち、ADR 0002 の「最初に見つかった1か所だけから読む」挙動とエラーの文面を前提にしたものは、この仕様に合わせて書きかえる。
+- 既存のテストのうち、[ADR 0002](0002-port-send-to-kindle-to-rust.md) の「最初に見つかった1か所だけから読む」挙動とエラーの文面を前提にしたものは、この仕様に合わせて書きかえる。
 
 ## トレードオフ
 

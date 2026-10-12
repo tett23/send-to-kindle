@@ -1,12 +1,12 @@
 # ADR 0009: 独立したリポジトリの adr-guard を使う
 
-ステータス: 採択→actionの指定方法はADR 0011
+ステータス: 採択→actionの指定方法は[ADR 0011](0011-pin-adr-guard-action-by-version.md)
 
 ## 文脈
 
-ADR 0001 と ADR 0004 で、コミット済みのADRの変更を防ぐ `adr-guard` を、このリポジトリの `tools/adr-guard` に作った。
+[ADR 0001](0001-adr-immutability-hooks.md) と [ADR 0004](0004-continuous-integration.md) で、コミット済みのADRの変更を防ぐ `adr-guard` を、このリポジトリの `tools/adr-guard` に作った。
 ADRを使う運用はほかのリポジトリでも同じであり、リポジトリごとに複製すると保守の手間がかかる。
-そこで adr-guard を独立したリポジトリ [tett23/adr-guard](https://github.com/tett23/adr-guard) に移し、リリースとCI用のcomposite actionで配布する（tett23/adr-guard の ADR 0001）。
+そこで adr-guard を独立したリポジトリ [tett23/adr-guard](https://github.com/tett23/adr-guard) に移し、リリースとCI用のcomposite actionで配布する（tett23/adr-guard の [ADR 0001](https://github.com/tett23/adr-guard/blob/main/docs/adr/0001-standalone-adr-guard.md)）。
 
 このリポジトリも、`tools/adr-guard` をやめて独立した adr-guard を使うように切りかえる。
 
@@ -18,10 +18,10 @@ ADRを使う運用はほかのリポジトリでも同じであり、リポジ�
 - Claude CodeのPreToolUse hook（`.claude/settings.json`）のコマンドを `adr-guard claude-hook` にする。
 - CI（`.github/workflows/ci.yml`）
   - `rust` ジョブのマトリクスから `adr-guard` を外し、リポジトリ直下だけを検査する。
-  - `adr` ジョブを、tett23/adr-guard のcomposite action（`uses: tett23/adr-guard@<タグ>`、コミットのSHAで固定する）に置きかえる。範囲（`base`、`head`）はADR 0004 のとおりとする。
+  - `adr` ジョブを、tett23/adr-guard のcomposite action（`uses: tett23/adr-guard@<タグ>`、コミットのSHAで固定する）に置きかえる。範囲（`base`、`head`）は[ADR 0004](0004-continuous-integration.md) のとおりとする。
 - `README.md` の開発の節に、adr-guard のインストール手順（tett23/adr-guard のREADMEへのリンク）を記載し、hookの実行にRustのツールチェインが不要になったことを反映する。
 - `docs/specifications.md` の開発プロセスの記述を更新する。
-- ADR 0001 のステータスを `採択→0004、0009` に、ADR 0004 のステータスを `採択→0006、0009` にする。
+- [ADR 0001](0001-adr-immutability-hooks.md) のステータスを `採択→0004、0009` に、[ADR 0004](0004-continuous-integration.md) のステータスを `採択→0006、0009` にする。
 
 ## 実装しないこと
 

@@ -1,6 +1,6 @@
 # ADR 0001: ADRの運用とコミット済みADRの変更防止
 
-ステータス: 採択→0004、0009
+ステータス: 採択→[0004](0004-continuous-integration.md)、[0009](0009-use-external-adr-guard.md)
 
 ## 文脈
 

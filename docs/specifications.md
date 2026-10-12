@@ -2,7 +2,7 @@
 
 ## send-to-kindle
 
-ファイルをKindleのメールアドレスへ添付して送るコマンド（ADR 0002）。
+ファイルをKindleのメールアドレスへ添付して送るコマンド（[ADR 0002](adr/0002-port-send-to-kindle-to-rust.md)）。
 
 ### 使い方
 
@@ -12,7 +12,7 @@ send-to-kindle --help
 ```
 
 - `--env-file <パス>`、`--env-file=<パス>`、`-e <パス>` で設定を読むファイルを指定する。オプションはファイルの前後どちらに置いてもよい。
-- `-h` または `--help` が `--` より前にあれば、ほかの引数（不正なものを含む）にかかわらず、ヘルプを標準出力に表示して終了コード0で終わる。設定やファイルは読まない（ADR 0005）。
+- `-h` または `--help` が `--` より前にあれば、ほかの引数（不正なものを含む）にかかわらず、ヘルプを標準出力に表示して終了コード0で終わる。設定やファイルは読まない（[ADR 0005](adr/0005-cli-help.md)）。
   - ヘルプには、バージョン、使い方、引数、オプション、設定（読む順序と項目）、送信内容、例を載せる。
 - `--` より後ろの引数と、`-` だけの引数はファイルとして扱う。
 - ファイルがちょうど1つでなければ、使い方を表示してエラーにする。
@@ -29,7 +29,7 @@ send-to-kindle --help
 | `SMTP_USER_NAME` | SMTPの認証に使うユーザー名 |
 | `SMTP_PASSWORD` | SMTPの認証に使うパスワード |
 
-- 次の場所を、この優先順位で読む（ADR 0008）。
+- 次の場所を、この優先順位で読む（[ADR 0008](adr/0008-read-user-config-by-default.md)）。
   1. `--env-file` で指定したファイル。ファイルが無ければ `指定した .env がありません: <パス>` でエラーにする。
   2. 環境変数（シェルで指定されたもの）
   3. カレントディレクトリの `.env`
@@ -41,7 +41,7 @@ send-to-kindle --help
 - 設定項目ごとに、優先順位の高い場所から順に探し、最初に見つかった値を使う。場所ごとに一部の項目だけを書いてよい。
 - 空文字の値は、その場所に無いものとして扱い、次の場所を探す。
 - どの場所にも無い項目は `次の設定がありません: <項目, ...>（読んだ場所: <場所, ...>）` の形で列挙する。読んだ場所は、優先順位の順に、実際に読んだファイルのパスと「環境変数」を並べる。
-- `SMTP_PORT` は正の整数（先頭が0でない数字列）でなければ `SMTP_PORT は正の整数で指定してください: <値>` でエラーにする。65535より大きければ `SMTP_PORT は 65535 以下で指定してください: <値>` でエラーにする（ADR 0003）。
+- `SMTP_PORT` は正の整数（先頭が0でない数字列）でなければ `SMTP_PORT は正の整数で指定してください: <値>` でエラーにする。65535より大きければ `SMTP_PORT は 65535 以下で指定してください: <値>` でエラーにする（[ADR 0003](adr/0003-validate-smtp-port-range.md)）。
 
 ### `.env` の書式
 
@@ -92,7 +92,7 @@ send-to-kindle --help
 - 実装の前に `docs/adr/` にADRを作成し、人間のレビューを経てからコミットする。
 - ファイル名は `0001-feature-details.md` の形式（4桁の連番＋kebab-case）とする。
 - コミット済みのADRはステータスの行を除いて変更できない。仕様を変更する場合は新しいADRを作成する。
-- この制約は次の三か所で強制する。検査は独立したリポジトリの [adr-guard](https://github.com/tett23/adr-guard) が担う（ADR 0001、0004、0009）。
+- この制約は次の三か所で強制する。検査は独立したリポジトリの [adr-guard](https://github.com/tett23/adr-guard) が担う（[ADR 0001](adr/0001-adr-immutability-hooks.md)、[0004](adr/0004-continuous-integration.md)、[0009](adr/0009-use-external-adr-guard.md)）。
   - gitのpre-commit hook（`.githooks/pre-commit`）。手元にインストールした `adr-guard pre-commit` を実行する。
   - Claude CodeのPreToolUse hook（`.claude/settings.json`）。手元にインストールした `adr-guard claude-hook` を実行する。
   - CI。adr-guard のcomposite actionで `adr-guard check-range` を実行する。範囲内のマージ以外の各コミットを、親コミットとの差分で検査する。
@@ -100,30 +100,30 @@ send-to-kindle --help
 
 ### CI
 
-- GitHub Actions（`.github/workflows/ci.yml`）で、`main` へのpushとプルリクエストのときに実行する（ADR 0004）。
+- GitHub Actions（`.github/workflows/ci.yml`）で、`main` へのpushとプルリクエストのときに実行する（[ADR 0004](adr/0004-continuous-integration.md)）。
 - `rust` ジョブ：`cargo fmt --check`、`cargo clippy --all-targets -- -D warnings`、`cargo test` を実行する。
-- `adr` ジョブ：adr-guard のcomposite action（バージョンのタグで指定。現在は `v0.2.1`）で、コミット済みのADRが変更されていないことを検査する（ADR 0009、0011）。範囲は次のとおり。
+- `adr` ジョブ：adr-guard のcomposite action（バージョンのタグで指定。現在は `v0.2.1`）で、コミット済みのADRが変更されていないことを検査する（[ADR 0009](adr/0009-use-external-adr-guard.md)、[0011](adr/0011-pin-adr-guard-action-by-version.md)）。範囲は次のとおり。
   - プルリクエスト：ベースブランチの先端からプルリクエストの先端まで
   - `main` へのpush：push前の先端からpush後の先端まで。push前の先端が無ければルートコミットから
 
 ### リリース
 
-- `v` で始まるタグをpushすると、GitHub Actions（`.github/workflows/release.yml`）がリリースを作成する（ADR 0006）。
+- `v` で始まるタグをpushすると、GitHub Actions（`.github/workflows/release.yml`）がリリースを作成する（[ADR 0006](adr/0006-release-binaries.md)）。
 - 手順：`Cargo.toml` の `version` を更新してコミットし、`v<version>` のタグをpushする。
 - タグが `v<Cargo.toml の version>` と一致しなければ失敗する。一致すれば `cargo test --locked` を実行してからビルドする。
 - 成果物
-  - 次のターゲットごとの `send-to-kindle-<タグ>-<ターゲット>.tar.gz`。中身はバイナリ、`LICENSE`、`README.md`、`.env.example`（ADR 0007）。アーカイブを作ったあと、これらがそろっていることを確かめ、欠けていれば失敗する。
+  - 次のターゲットごとの `send-to-kindle-<タグ>-<ターゲット>.tar.gz`。中身はバイナリ、`LICENSE`、`README.md`、`.env.example`（[ADR 0007](adr/0007-include-env-example-in-release-archive.md)）。アーカイブを作ったあと、これらがそろっていることを確かめ、欠けていれば失敗する。
     - `aarch64-apple-darwin`
     - `x86_64-apple-darwin`
     - `x86_64-unknown-linux-gnu`
   - すべてのアーカイブのSHA-256をまとめた `SHA256SUMS`
 - リリースのタイトルはタグ名、本文はGitHubの自動生成とする。
-- `-` を含むタグ（例：`v0.3.0-rc`）はプレリリースとして作成する。`Cargo.toml` の `version` も同じ形（例：`0.3.0-rc`）にする（ADR 0010）。
+- `-` を含むタグ（例：`v0.3.0-rc`）はプレリリースとして作成する。`Cargo.toml` の `version` も同じ形（例：`0.3.0-rc`）にする（[ADR 0010](adr/0010-prerelease-tags.md)）。
 - macOS向けのバイナリは、Apple Developer IDによる署名と公証を行わない。Apple Silicon向けにはリンカーによるアドホック署名だけが付く。検疫の外し方はREADMEに記載する。
 
 ### 依存の方針
 
-- 小さく再実装が容易なライブラリには依存せず、必要な範囲だけを再実装する（ADR 0002）。
+- 小さく再実装が容易なライブラリには依存せず、必要な範囲だけを再実装する（[ADR 0002](adr/0002-port-send-to-kindle-to-rust.md)）。
 - 次のすべてを満たすものを「小さく再実装が容易」とみなす。
   - 必要な範囲が数十〜百数十行程度で書ける。
   - 必要な仕様が小さく、変わりにくい。

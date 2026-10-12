@@ -4,7 +4,7 @@
 
 ## 文脈
 
-ADR 0009 で、CIの `adr` ジョブを tett23/adr-guard のcomposite actionに置きかえ、actionをコミットのSHA（v0.1.0 のコミット）で固定した。
+[ADR 0009](0009-use-external-adr-guard.md) で、CIの `adr` ジョブを tett23/adr-guard のcomposite actionに置きかえ、actionをコミットのSHA（v0.1.0 のコミット）で固定した。
 
 SHAでの指定は、どのバージョンを使っているかがコメントを見ないとわからず、更新のたびにタグからSHAを調べ直す手間がかかる。
 tett23/adr-guard は自分たちで管理しているリポジトリであり、タグが書きかえられる心配は小さい。
@@ -18,7 +18,7 @@ tett23/adr-guard は自分たちで管理しているリポジトリであり、
 - 指定するバージョンは、現時点の最新の v0.2.1 とする。
 - `README.md` の開発の節にある adr-guard のインストール手順のタグも v0.2.1 にする。
 - `docs/specifications.md` のCIの記述（「コミットのSHAで固定」）を、バージョンのタグで指定する形に更新する。
-- ADR 0009 のステータスを `採択→actionの指定方法はADR 0011` にする。
+- [ADR 0009](0009-use-external-adr-guard.md) のステータスを `採択→actionの指定方法はADR 0011` にする。
 
 ## 実装しないこと
 

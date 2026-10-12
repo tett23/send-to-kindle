@@ -1,14 +1,14 @@
 # ADR 0004: GitHub ActionsでCIを設定する
 
-ステータス: 採択→0006、0009
+ステータス: 採択→[0006](0006-release-binaries.md)、[0009](0009-use-external-adr-guard.md)
 
 ## 文脈
 
 リポジトリをGitHubに公開した（tett23/send-to-kindle）。
 現在、フォーマット・lint・テストは手元で実行しているだけで、実行し忘れたまま変更がpushされうる。
 
-また、ADR 0001 ではコミット済みのADRの変更をpre-commit hookとClaude Codeのhookで防いでいる。
-しかし、次の場合は防げない。いずれもADR 0001 の「実装しないこと」に挙げた穴である。
+また、[ADR 0001](0001-adr-immutability-hooks.md) ではコミット済みのADRの変更をpre-commit hookとClaude Codeのhookで防いでいる。
+しかし、次の場合は防げない。いずれも[ADR 0001](0001-adr-immutability-hooks.md) の「実装しないこと」に挙げた穴である。
 
 - `core.hooksPath` を設定していないクローンからのコミット
 - `git commit --no-verify` によるコミット
@@ -52,7 +52,7 @@ push時とプルリクエスト時に、これらをCIで検査したい。
   - プルリクエスト：ベースブランチの先端からプルリクエストの先端まで
   - `main` へのpush：push前の先端（`github.event.before`）からpush後の先端まで。push前の先端が無い場合（ブランチの新規作成など）は、ルートコミットから検査する。
 - 範囲内の全コミットを読むため、チェックアウトでは全履歴を取得する（`fetch-depth: 0`）。
-- ADR 0001 のステータスを `採択→0004` にする。
+- [ADR 0001](0001-adr-immutability-hooks.md) のステータスを `採択→0004` にする。
 
 ### ドキュメント
 
@@ -88,4 +88,4 @@ push時とプルリクエスト時に、これらをCIで検査したい。
 - 実行環境をUbuntuだけにすると、macOSでだけ起きる不具合（パスの扱いなど）はCIで見つからない。普段の開発はmacOSで行い、手元でテストするため、CIの時間を優先した。
 - ツールチェインをstableにするため、Rustの新しいリリースで新しいclippyの警告が出てCIが失敗することがある。バージョンを固定すると、更新の手間がかかる。警告にはその時点で対応する。
 - ADRの検査を差分全体ではなくコミットごとに行うため、プルリクエストの途中で一度でもADRを書きかえると、後で戻しても失敗する。「一度コミットしたADRは変更不可」という規則に合わせた。履歴を書きかえて（rebaseなどで）直す必要がある。
-- サードパーティのアクション（`dtolnay/rust-toolchain` や `Swatinem/rust-cache` など）を使えばワークフローは短くなる。依存を増やさない方針（ADR 0002）に合わせ、ランナーに入っている `rustup` と公式のアクションで済ませた。
+- サードパーティのアクション（`dtolnay/rust-toolchain` や `Swatinem/rust-cache` など）を使えばワークフローは短くなる。依存を増やさない方針（[ADR 0002](0002-port-send-to-kindle-to-rust.md)）に合わせ、ランナーに入っている `rustup` と公式のアクションで済ませた。

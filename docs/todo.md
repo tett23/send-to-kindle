@@ -5,10 +5,10 @@
 ## 2027-01-01以降：Intel Mac向けビルドをリリースから削除する
 
 - リリースのターゲットから `x86_64-apple-darwin` を外す。
-- ターゲットはADR 0006で定めているため、先に変更用のADRを作成し、レビューを受けてから実装する。
+- ターゲットは[ADR 0006](adr/0006-release-binaries.md)で定めているため、先に変更用のADRを作成し、レビューを受けてから実装する。
 - 実装時の変更箇所
   - `.github/workflows/release.yml` のビルドのマトリクス
   - `README.md` のインストールの表
   - `docs/specifications.md` のリリースの成果物
-  - ADR 0006 のステータス
+  - [ADR 0006](adr/0006-release-binaries.md) のステータス
 - 既存のリリースに添付したIntel Mac向けのアーカイブは削除しない。
