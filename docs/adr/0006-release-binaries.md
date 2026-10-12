@@ -1,11 +1,11 @@
 # ADR 0006: vで始まるタグでリリースを作成する
 
-ステータス: 採択→0007、0010
+ステータス: 採択→[0007](0007-include-env-example-in-release-archive.md)、[0010](0010-prerelease-tags.md)
 
 ## 文脈
 
 現在、send-to-kindle を使うには、Rustのツールチェインを入れて `cargo install --path .` でビルドする必要がある。
-ADR 0002 ではビルド済みバイナリの配布を、ADR 0004 ではリリースの自動化を、それぞれ「実装しないこと」とした。
+[ADR 0002](0002-port-send-to-kindle-to-rust.md) ではビルド済みバイナリの配布を、[ADR 0004](0004-continuous-integration.md) ではリリースの自動化を、それぞれ「実装しないこと」とした。
 
 Rustのツールチェインが無い環境でも使えるよう、ビルド済みのバイナリをGitHubのリリースで配布したい。
 
@@ -25,7 +25,7 @@ Developer Programへの登録が必要で、個人のツールには見合わな
   3. `release`：GitHubのリリースを作成し、アーカイブとチェックサムを添付する。
 - `permissions` は、ワークフロー全体では `contents: read` とし、`release` ジョブだけ `contents: write` とする。
 - 使うアクションは `actions/checkout`、`actions/upload-artifact`、`actions/download-artifact` だけとし、コミットのSHAで固定する。リリースの作成は、ランナーに入っている `gh` コマンドで行う。
-- ツールチェインはCI（ADR 0004）と同じく、ランナーに入っている `rustup` でstableを入れる。
+- ツールチェインはCI（[ADR 0004](0004-continuous-integration.md)）と同じく、ランナーに入っている `rustup` でstableを入れる。
 
 ### ターゲット
 
@@ -57,7 +57,7 @@ Developer Programへの登録が必要で、個人のツールには見合わな
   - 検疫の外し方：`xattr -d com.apple.quarantine <パス>`。あわせて、ブラウザでダウンロードした場合に検疫属性が付き、`curl` などでダウンロードした場合は付かないこと
   - 検疫を外すことは、そのバイナリを信頼するという判断であり、チェックサムを確かめてから行うこと
 - `docs/specifications.md` に、リリースの手順（`Cargo.toml` の `version` を更新してコミットし、`v<version>` のタグをpushする）と成果物を記載する。
-- ADR 0002 のステータスを `採択→0003、0005、0006` に、ADR 0004 のステータスを `採択→0006` にする。
+- [ADR 0002](0002-port-send-to-kindle-to-rust.md) のステータスを `採択→0003、0005、0006` に、[ADR 0004](0004-continuous-integration.md) のステータスを `採択→0006` にする。
 
 ## 実装しないこと
 
