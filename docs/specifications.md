@@ -93,10 +93,11 @@ send-to-kindle --help
 - ファイル名は `0001-feature-details.md` の形式（4桁の連番＋kebab-case）とする。
 - コミット済みのADRはステータスの行を除いて変更できない。仕様を変更する場合は新しいADRを作成する。
 - この制約は次の三か所で強制する。検査は独立したリポジトリの [adr-guard](https://github.com/tett23/adr-guard) が担う（[ADR 0001](adr/0001-adr-immutability-hooks.md)、[0004](adr/0004-continuous-integration.md)、[0009](adr/0009-use-external-adr-guard.md)）。
-  - gitのpre-commit hook（`.githooks/pre-commit`）。手元にインストールした `adr-guard pre-commit --allow-links` を実行する。
+  - gitのpre-commit hook（`.githooks/pre-commit`）。手元にインストールした `adr-guard pre-commit --allow-status --allow-links` を実行する。
   - Claude CodeのPreToolUse hook（`.claude/settings.json`）。手元にインストールした `adr-guard claude-hook` を実行する。
   - CI。adr-guard のcomposite actionで `adr-guard check-range` を実行する。範囲内のマージ以外の各コミットを、親コミットとの差分で検査する。
     範囲内で一度でもADRを書きかえたコミットがあれば、後のコミットで戻していても失敗する。
+- コミット済みのADRのステータスの行の変更は、pre-commit hookとCIで許可する（`--allow-status`、[ADR 0014](adr/0014-update-adr-guard-to-v0.5.0.md)）。adr-guard v0.5.0 では、`--allow-status` を付けないとステータスの行も変更できない。
 - コミット済みのADRにADRの参照のリンクを付けるだけの変更は、pre-commit hookとCIで許可する（`--allow-links`、[ADR 0013](adr/0013-update-adr-guard-to-v0.4.0.md)）。
 - 文書（`.md`）の中のADRの参照（`ADR 0001` の形）には、ADRのファイルへのリンクを付ける。リンクが無ければ、pre-commit hookとCIでエラーになる（[ADR 0013](adr/0013-update-adr-guard-to-v0.4.0.md)）。`adr-guard links --fix` で付けられる。
 
@@ -104,7 +105,7 @@ send-to-kindle --help
 
 - GitHub Actions（`.github/workflows/ci.yml`）で、`main` へのpushとプルリクエストのときに実行する（[ADR 0004](adr/0004-continuous-integration.md)）。
 - `rust` ジョブ：`cargo fmt --check`、`cargo clippy --all-targets -- -D warnings`、`cargo test` を実行する。
-- `adr` ジョブ：adr-guard のcomposite action（バージョンのタグで指定。現在は `v0.4.0`）で、コミット済みのADRが変更されていないこと（`check-range --allow-links`）と、ADRの参照にリンクがあること（`links`）を検査する（[ADR 0009](adr/0009-use-external-adr-guard.md)、[0011](adr/0011-pin-adr-guard-action-by-version.md)、[0012](adr/0012-update-adr-guard-to-v0.3.0.md)、[0013](adr/0013-update-adr-guard-to-v0.4.0.md)）。範囲は次のとおり。
+- `adr` ジョブ：adr-guard のcomposite action（バージョンのタグで指定。現在は `v0.5.0`）で、コミット済みのADRが変更されていないこと（`check-range --allow-status --allow-links`）と、ADRの参照にリンクがあること（`links`）を検査する（[ADR 0009](adr/0009-use-external-adr-guard.md)、[0011](adr/0011-pin-adr-guard-action-by-version.md)、[0012](adr/0012-update-adr-guard-to-v0.3.0.md)、[0013](adr/0013-update-adr-guard-to-v0.4.0.md)、[0014](adr/0014-update-adr-guard-to-v0.5.0.md)）。範囲は次のとおり。
   - プルリクエスト：ベースブランチの先端からプルリクエストの先端まで
   - `main` へのpush：push前の先端からpush後の先端まで。push前の先端が無ければルートコミットから
   - コミットメッセージのトレーラーに `ADR-Guard-Allow: <理由>` があるコミットは、ADRの書きかえを意図したものとして許可する（[ADR 0012](adr/0012-update-adr-guard-to-v0.3.0.md)）。
