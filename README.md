@@ -145,7 +145,7 @@ SMTP_PASSWORD=abcdefghijklmnop
 adr-guard のインストール方法は、adr-guard のREADMEを参照。
 
 ```sh
-cargo install --git https://github.com/tett23/adr-guard --tag v0.3.0
+cargo install --git https://github.com/tett23/adr-guard --tag v0.4.0
 git config core.hooksPath .githooks
 ```
 
@@ -155,7 +155,11 @@ git config core.hooksPath .githooks
 コミット済みのADRはステータスの行を除いて変更できず、adr-guard によって、pre-commit hook、Claude Codeのhook、CIで強制される。
 adr-guard が手元に無いと、pre-commit hookはコミットを拒否し、Claude Codeのhookは編集を止めない。
 
-書式の修正など、意図してコミット済みのADRを書きかえる場合は、書きかえをほかの変更と分けて1つのコミットにし、環境変数 `ADR_GUARD_ALLOW` に理由を入れてコミットする。
+文書（`.md`）の中のADRの参照（`ADR 0001` の形）には、ADRのファイルへのリンクが要る。リンクが無いと、pre-commit hookとCIでエラーになる。
+`adr-guard links --fix` でリンクを付けられる。コミット済みのADRは `adr-guard links --fix --include-committed` で直す。
+コミット済みのADRにリンクを付けるだけの変更は、pre-commit hookとCIの `--allow-links` で許可される。
+
+それ以外の書きかえ（書式の修正など）を意図して行うのは緊急時に限る。その場合は、書きかえをほかの変更と分けて1つのコミットにし、環境変数 `ADR_GUARD_ALLOW` に理由を入れてコミットする。
 コミットメッセージの最後の段落には `ADR-Guard-Allow: <理由>` のトレーラーを付け、CIの検査を通す。
 詳しくは adr-guard のREADMEの「[意図してADRを書きかえる場合](https://github.com/tett23/adr-guard#意図してadrを書きかえる場合)」を参照。
 
