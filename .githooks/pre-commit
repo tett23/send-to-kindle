@@ -1,4 +1,4 @@
 #!/bin/sh
 # コミット済みのADR（docs/adr/）は「ステータス:」の行を除いて変更・削除できない。
-# 検査には https://github.com/tett23/adr-guard を使う（docs/adr/0009）。
-exec adr-guard pre-commit
+# 検査には https://github.com/tett23/adr-guard を使う（docs/adr/0009, 0013）。
+exec adr-guard pre-commit --allow-links
