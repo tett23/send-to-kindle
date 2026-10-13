@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "adr-guard claude-hook"
+            "command": "adr-guard claude-hook --allow-status"
           }
         ]
       }

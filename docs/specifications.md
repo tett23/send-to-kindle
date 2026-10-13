@@ -94,10 +94,10 @@ send-to-kindle --help
 - コミット済みのADRはステータスの行を除いて変更できない。仕様を変更する場合は新しいADRを作成する。
 - この制約は次の三か所で強制する。検査は独立したリポジトリの [adr-guard](https://github.com/tett23/adr-guard) が担う（[ADR 0001](adr/0001-adr-immutability-hooks.md)、[0004](adr/0004-continuous-integration.md)、[0009](adr/0009-use-external-adr-guard.md)）。
   - gitのpre-commit hook（`.githooks/pre-commit`）。手元にインストールした `adr-guard pre-commit --allow-status --allow-links` を実行する。
-  - Claude CodeのPreToolUse hook（`.claude/settings.json`）。手元にインストールした `adr-guard claude-hook` を実行する。
+  - Claude CodeのPreToolUse hook（`.claude/settings.json`）。手元にインストールした `adr-guard claude-hook --allow-status` を実行する（[ADR 0016](adr/0016-allow-status-in-claude-hook.md)）。
   - CI。adr-guard のcomposite actionで `adr-guard check-range` を実行する。範囲内のマージ以外の各コミットを、親コミットとの差分で検査する。
     範囲内で一度でもADRを書きかえたコミットがあれば、後のコミットで戻していても失敗する。
-- コミット済みのADRのステータスの行の変更は、pre-commit hookとCIで許可する（`--allow-status`、[ADR 0014](adr/0014-update-adr-guard-to-v0.5.0.md)）。adr-guard v0.5.0 以降では、`--allow-status` を付けないとステータスの行も変更できない。
+- コミット済みのADRのステータスの行の変更は、pre-commit hook、Claude Codeのhook、CIで許可する（`--allow-status`、[ADR 0014](adr/0014-update-adr-guard-to-v0.5.0.md)、[0016](adr/0016-allow-status-in-claude-hook.md)）。adr-guard v0.5.0 以降では、`--allow-status` を付けないとステータスの行も変更できない。
 - 各ADRは、行頭が `ステータス:` のステータスの行をちょうど1つ持つ。無い、または2つ以上あれば、pre-commit hookとCI（`adr-guard check-status`）でエラーになる（[ADR 0015](adr/0015-update-adr-guard-to-v0.8.0.md)）。
 - 監査や計測の記録（`docs/audit/` と `docs/benchmarks/` 以下のファイル）も、コミット済みのものは変更・削除・移動できない。`--allow-status` と `--allow-links` は記録には効かない。記録を直す場合は新しい記録を作成する（[ADR 0015](adr/0015-update-adr-guard-to-v0.8.0.md)）。
 - コミット済みのADRにADRの参照のリンクを付けるだけの変更は、pre-commit hookとCIで許可する（`--allow-links`、[ADR 0013](adr/0013-update-adr-guard-to-v0.4.0.md)）。
