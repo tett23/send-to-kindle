@@ -145,7 +145,7 @@ SMTP_PASSWORD=abcdefghijklmnop
 adr-guard のインストール方法は、adr-guard のREADMEを参照。
 
 ```sh
-cargo install --git https://github.com/tett23/adr-guard --tag v0.4.0
+cargo install --git https://github.com/tett23/adr-guard --tag v0.5.0
 git config core.hooksPath .githooks
 ```
 
@@ -153,6 +153,7 @@ git config core.hooksPath .githooks
 
 設計判断は `docs/adr/` にADRとして記録する。
 コミット済みのADRはステータスの行を除いて変更できず、adr-guard によって、pre-commit hook、Claude Codeのhook、CIで強制される。
+ステータスの行の変更は、pre-commit hookとCIの `--allow-status`（Claude Codeのhookは `adr-guard claude-hook --allow-status`）で許可される。
 adr-guard が手元に無いと、pre-commit hookはコミットを拒否し、Claude Codeのhookは編集を止めない。
 
 文書（`.md`）の中のADRの参照（`ADR 0001` の形）には、ADRのファイルへのリンクが要る。リンクが無いと、pre-commit hookとCIでエラーになる。
