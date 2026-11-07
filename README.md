@@ -145,7 +145,7 @@ SMTP_PASSWORD=abcdefghijklmnop
 adr-guard のインストール方法は、adr-guard のREADMEを参照。
 
 ```sh
-cargo install --git https://github.com/tett23/adr-guard --tag v0.8.3
+cargo install --git https://github.com/tett23/adr-guard --tag v0.10.0
 git config core.hooksPath .githooks
 ```
 
@@ -161,6 +161,8 @@ adr-guard が手元に無いと、pre-commit hookはコミットを拒否し、C
 
 文書（`.md`）の中のADRの参照（`ADR 0001` の形）には、ADRのファイルへのリンクが要る。リンクが無いと、pre-commit hookとCIでエラーになる。
 `adr-guard links --fix` でリンクを付けられる。コミット済みのADRは `adr-guard links --fix --include-committed` で直す。
+参照の直前の語（空白1つ）は修飾子として扱われ、`/` か `-` を含む語のときは、その語が指すディレクトリやモジュールのADRへのリンクが要る。ほかのリポジトリのADRは、`tett23/adr-guard の [ADR 0019: …](https://github.com/…)` のようにリンクのテキストごと外部リンクにする。
+同じディレクトリに同じ番号のADRが2つ以上あると、CIでエラーになる。`adr-guard check-numbers` で確かめ、`adr-guard renumber` で直す。振りなおしのコミットには `--allow-renumber` が要る。
 コミット済みのADRのリンクだけの変更（リンクを付ける・外す・リンク先を変える）は、pre-commit hookとCIの `--allow-links` で許可される。リンクのテキストや本文は変更できない。
 
 それ以外の書きかえ（書式の修正など）を意図して行うのは緊急時に限る。その場合は、書きかえをほかの変更と分けて1つのコミットにし、環境変数 `ADR_GUARD_ALLOW` に理由を入れてコミットする。
