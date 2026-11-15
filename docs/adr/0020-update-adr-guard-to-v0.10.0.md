@@ -1,6 +1,6 @@
 # ADR 0020: adr-guard を v0.10.0 に上げ、ADRの番号の重複と修飾子付きの参照を検査する
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 

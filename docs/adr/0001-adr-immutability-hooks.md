@@ -1,6 +1,6 @@
 # ADR 0001: ADRの運用とコミット済みADRの変更防止
 
-ステータス: 採択→[0004](0004-continuous-integration.md)、[0009](0009-use-external-adr-guard.md)
+Status: superseded [{"by":["docs/adr/0004-continuous-integration.md","docs/adr/0009-use-external-adr-guard.md"],"part":null}]
 
 ## 文脈
 

@@ -1,6 +1,6 @@
 # ADR 0016: Claude Codeのhookでも、ADRのステータスの行の変更を許可する
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 

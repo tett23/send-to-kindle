@@ -1,6 +1,6 @@
 # ADR 0008: 設定を項目ごとに重ねて読み、~/.config/send-to-kindle/.env を既定で読む
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 

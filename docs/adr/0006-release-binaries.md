@@ -1,6 +1,6 @@
 # ADR 0006: vで始まるタグでリリースを作成する
 
-ステータス: 採択→[0007](0007-include-env-example-in-release-archive.md)、[0010](0010-prerelease-tags.md)
+Status: superseded [{"by":["docs/adr/0007-include-env-example-in-release-archive.md","docs/adr/0010-prerelease-tags.md"],"part":null}]
 
 ## 文脈
 
