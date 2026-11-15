@@ -1,6 +1,6 @@
 # ADR 0021: adr-guard を v0.13.1 に上げ、ADRのステータスの行を新形式に移す
 
-Status: proposed
+Status: accepted-pending
 
 ## 文脈
 
