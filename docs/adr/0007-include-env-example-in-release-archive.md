@@ -1,6 +1,6 @@
 # ADR 0007: リリースのアーカイブに .env.example を含める
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 

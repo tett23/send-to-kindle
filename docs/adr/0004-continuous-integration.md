@@ -1,6 +1,6 @@
 # ADR 0004: GitHub ActionsでCIを設定する
 
-ステータス: 採択→[0006](0006-release-binaries.md)、[0009](0009-use-external-adr-guard.md)
+Status: superseded [{"by":["docs/adr/0006-release-binaries.md","docs/adr/0009-use-external-adr-guard.md"],"part":null}]
 
 ## 文脈
 

@@ -1,6 +1,6 @@
 # ADR 0015: adr-guard を v0.8.0 に上げ、ADRのステータスの行を検査する
 
-ステータス: 採択→指定するバージョンは[ADR 0017](0017-update-adr-guard-to-v0.8.1.md)
+Status: superseded [{"by":["docs/adr/0017-update-adr-guard-to-v0.8.1.md"],"part":"指定するバージョン"}]
 
 ## 文脈
 

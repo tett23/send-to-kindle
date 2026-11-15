@@ -1,6 +1,6 @@
 # ADR 0002: send-to-kindle をRustに移植する
 
-ステータス: 採択→[0003](0003-validate-smtp-port-range.md)、[0005](0005-cli-help.md)、[0006](0006-release-binaries.md)、[0008](0008-read-user-config-by-default.md)
+Status: superseded [{"by":["docs/adr/0003-validate-smtp-port-range.md","docs/adr/0005-cli-help.md","docs/adr/0006-release-binaries.md","docs/adr/0008-read-user-config-by-default.md"],"part":null}]
 
 ## 文脈
 

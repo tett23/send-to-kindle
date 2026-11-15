@@ -1,6 +1,6 @@
 # ADR 0005: CLIのヘルプを追加する
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 

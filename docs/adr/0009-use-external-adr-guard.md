@@ -1,6 +1,6 @@
 # ADR 0009: 独立したリポジトリの adr-guard を使う
 
-ステータス: 採択→actionの指定方法は[ADR 0011](0011-pin-adr-guard-action-by-version.md)、Claude Codeのhookのコマンドは[ADR 0016](0016-allow-status-in-claude-hook.md)
+Status: superseded [{"by":["docs/adr/0011-pin-adr-guard-action-by-version.md"],"part":"actionの指定方法"},{"by":["docs/adr/0016-allow-status-in-claude-hook.md"],"part":"Claude Codeのhookのコマンド"}]
 
 ## 文脈
 

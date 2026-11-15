@@ -1,6 +1,6 @@
 # ADR 0003: SMTP_PORT の範囲を設定の読み込み時に検証する
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 

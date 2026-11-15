@@ -1,6 +1,6 @@
 # ADR 0011: adr-guard のactionをバージョンのタグで指定する
 
-ステータス: 採択→指定するバージョンは[ADR 0012](0012-update-adr-guard-to-v0.3.0.md)
+Status: superseded [{"by":["docs/adr/0012-update-adr-guard-to-v0.3.0.md"],"part":"指定するバージョン"}]
 
 ## 文脈
 
