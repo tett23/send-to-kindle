@@ -145,7 +145,7 @@ SMTP_PASSWORD=abcdefghijklmnop
 adr-guard のインストール方法は、adr-guard のREADMEを参照。
 
 ```sh
-cargo install --git https://github.com/tett23/adr-guard --tag v0.10.0
+cargo install --git https://github.com/tett23/adr-guard --tag v0.13.1
 git config core.hooksPath .githooks
 ```
 
@@ -154,8 +154,11 @@ git config core.hooksPath .githooks
 設計判断は `docs/adr/` にADRとして記録する。
 コミット済みのADRはステータスの行を除いて変更できず、adr-guard によって、pre-commit hook、Claude Codeのhook、CIで強制される。
 ステータスの行の変更は、pre-commit hookとCIの `--allow-status`（Claude Codeのhookは `adr-guard claude-hook --allow-status`）で許可される。
-各ADRには、行頭が `ステータス:` のステータスの行をちょうど1つ書く。無い、または2つ以上あると、pre-commit hookとCIでエラーになる。`adr-guard check-status` で確かめられる。
-採択されたが、まだ実装されていないADRのステータスは `採択（未実装）` とする。`adr-guard unimplemented` で一覧できる。
+各ADRには、行頭が `Status:` のステータスの行をちょうど1つ書く。無い、または2つ以上あると、pre-commit hookとCIでエラーになる。`adr-guard check-status` で確かめられる。
+ステータスの行は `Status: <トークン>` の形で書く。トークンは `proposed`、`accepted`、`accepted-pending`、`rejected`、`discarded`、`deprecated`、または `superseded [<変更の JSON 配列>]` である。修正されたADRは `superseded [{"by":["docs/adr/<修正したADR>"],"part":"<変更した部分>"}]` とする。
+新しいADRは、最初に `Status: proposed` でコミットする。採択は後のコミットで `accepted` にする。
+採択されたが、まだ実装されていないADRのステータスは `accepted-pending` とする。`adr-guard unimplemented` で一覧できる。
+pre-commit hookとCIは、ステータスの行の状態遷移（`proposed` から `accepted` へ、など）を検査する。この検査は `--allow-status`、`ADR_GUARD_ALLOW`、`ADR-Guard-Allow` のトレーラーでは免除されない。
 監査や計測の記録（`docs/audit/`、`docs/audits/`、`docs/benchmarks/`、`docs/benchmark/` 以下のファイル）も、コミット済みのものは変更・削除・移動できない。`--allow-status` と `--allow-links` は記録には効かないため、直す場合は新しい記録を作成する。
 adr-guard が手元に無いと、pre-commit hookはコミットを拒否し、Claude Codeのhookは編集を止めない。
 
